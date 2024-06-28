@@ -13,13 +13,13 @@
       system: let
         pkgs = nixpkgs.legacyPackages.${system};
       in rec {
-        name = "keys";
         packages.keys = import ./default.nix {pkgs = pkgs;};
         packages.default = packages.keys;
+
         apps.default =
           flake-utils.lib.mkApp
           {
-            drv = pkgs.writeShellScriptBin "pages" "${pkgs.python3}/bin/python3 -m http.server 8000 -d ${packages.keys}";
+            drv = pkgs.writeShellScriptBin "keys" "${pkgs.python3}/bin/python3 -m http.server 8000 -d ${packages.keys}";
           };
       }
     );
