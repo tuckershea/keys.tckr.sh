@@ -10,9 +10,9 @@ Export OCI images with these commands, which will
 build an image and link it to `./result`:
 
 ```sh
-nix build .#ociImage_amd64
+nix build .#ociImage-amd64
 # or
-nix build .#ociImage_arm64
+nix build .#ociImage-arm64
 ```
 
 You can then load them with `docker load < result`.

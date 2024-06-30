@@ -34,13 +34,13 @@
 
         apps.default = mkKeysApp pkgs;
 
-        packages.ociImage_amd64 = mkKeysContainer {
+        packages.ociImage-amd64 = mkKeysContainer {
           hostPkgs = pkgs.pkgsCross.gnu64;
           containerPkgs = pkgs.pkgsCross.gnu64;
           # Can change to musl64 after https://github.com/NixOS/nixpkgs/issues/266840
         };
 
-        packages.ociImage_arm64 = mkKeysContainer {
+        packages.ociImage-arm64 = mkKeysContainer {
           hostPkgs = pkgs.pkgsCross.aarch64-multiplatform;
           containerPkgs = pkgs.pkgsCross.aarch64-multiplatform;
           # Can change to aarch64-multiplatform-musl
