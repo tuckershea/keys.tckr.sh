@@ -1,8 +1,9 @@
-name: "Build"
+name: "Cache"
 
 on:
-  pull_request:
   push:
+    branches:
+      - main
 jobs:
   build:
     strategy:
@@ -16,4 +17,5 @@ jobs:
     - uses: cachix/cachix-action@v14
       with:
         name: tuckershea
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
     - run: nix build .#${{ matrix.target }}
