@@ -16,7 +16,13 @@
         mkKeysPackage = pkgs: import ./default.nix {inherit pkgs;};
         mkKeysApp = pkgs: (flake-utils.lib.mkApp
           {
-            drv = pkgs.writeShellScriptBin "keys" "${pkgs.python3}/bin/python3 -m http.server 8000 -d ${mkKeysPackage pkgs}";
+            drv = pkgs.writeShellScriptBin "keys" ''
+              ${pkgs.static-web-server}/bin/static-web-server \
+              --root ${mkKeysPackage pkgs} \
+              --index-files auth.keys \
+              --port 8000 \
+              --health
+            '';
           });
         mkKeysContainer = {
           hostPkgs,

@@ -1,4 +1,4 @@
-# keys.tuckershea.com
+# keys.tckr.sh
 
 A keyserver for my SSH keys.
 
@@ -15,7 +15,7 @@ nix build .#ociImage-amd64
 nix build .#ociImage-arm64
 ```
 
-You can then load them with `docker load < result`.
+You can then load the result with `docker load < result`.
 
 ## Features
 
