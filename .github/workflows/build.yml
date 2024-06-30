@@ -16,4 +16,5 @@ jobs:
     - uses: cachix/cachix-action@v14
       with:
         name: tuckershea
+        skipPush: true
     - run: nix build .#${{ matrix.target }}
