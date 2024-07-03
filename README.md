@@ -1,12 +1,14 @@
 # keys.tckr.sh
 
-> [!WARNING]
-> This repository is for my own experimentation. It may not be
-> entirely practical, but hey, it does produce tiny container images.
-> I would not recommend building the OCI images for any platform
-> other than your current platform. Instead, use the GHCR images.
-
 A keyserver for my SSH keys.
+
+## Is this the best way to do this?
+
+No.
+
+SWS publishes a 4MB image. Just copying our files on top of that
+would be faster, simpler, smaller, and more cross-platform. This
+repository is for my own experimentation.
 
 ## Usage
 
