@@ -41,13 +41,13 @@
         apps.default = mkKeysApp pkgs;
 
         packages.ociImage-amd64 = mkKeysContainer {
-          hostPkgs = pkgs.pkgsCross.musl64;
-          containerPkgs = pkgs.pkgsCross.musl64;
+          hostPkgs = pkgs.pkgsCross.musl64.pkgsStatic;
+          containerPkgs = pkgs.pkgsCross.musl64.pkgsStatic;
         };
 
         packages.ociImage-arm64 = mkKeysContainer {
-          hostPkgs = pkgs.pkgsCross.aarch64-multiplatform-musl;
-          containerPkgs = pkgs.pkgsCross.aarch64-multiplatform-musl;
+          hostPkgs = pkgs.pkgsCross.aarch64-multiplatform-musl.pkgsStatic;
+          containerPkgs = pkgs.pkgsCross.aarch64-multiplatform-musl.pkgsStatic;
         };
       }
     );
