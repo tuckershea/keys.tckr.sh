@@ -19,7 +19,7 @@ jobs:
           hide_and_recreate: true
           hide_classify: "OUTDATED"
           message: |
-            ### Images for ${{ github.sha }}:
+            ### Images for ${{ github.sha }}
             Available for 14 days
 
   build:
