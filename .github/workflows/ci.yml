@@ -25,24 +25,49 @@ jobs:
         with:
           name: tuckershea
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - run: echo YEAR_MONTH="$(date '+%Y-%m')" >> $GITHUB_ENV
+
       - run: nix build .#${{ matrix.target }} -L
-      - run: docker load -i ./result
-      - run: docker tag keys:latest keys:$YEAR_MONTH
+          
+      - name: Temporarily save Docker image
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.target }}
+          path: ./result
+          retention-days: 1
+
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Retrieve amd64 image
+        uses: actions/download-artifact@v2
+        with:
+          name: ociImage-amd64
+          path: result-amd64
+      - run: docker load -i ./result-amd64
+      - run: docker tag keys:latest keys:latest-amd64
+
+      - name: Retrieve arm64 image
+        uses: actions/download-artifact@v2
+        with:
+          name: ociImage-arm64
+          path: result-arm64
+      - run: docker load -i ./result-arm64
+      - run: docker tag keys:latest keys:latest-arm64
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push image
+
+      - name: Push Manifest
         run: |
           IMAGE_ID=ghcr.io/tuckershea/keys.tckr.sh
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
-          docker tag keys:$YEAR_MONTH $IMAGE_ID:$YEAR_MONTH
-          docker push $IMAGE_ID:$YEAR_MONTH
-
-          docker tag keys:latest $IMAGE_ID:latest
-          docker push $IMAGE_ID:latest
+          docker manifest create $IMAGE_ID:latest \
+          --amend $IMAGE_ID:latest-amd64 \
+          --amend $IMAGE_ID:latest-arm64
+          docker manifest push $IMAGE_ID:latest
