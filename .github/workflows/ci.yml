@@ -35,7 +35,7 @@ jobs:
           gzip --decompress image.tar.gz
           
       - name: Temporarily save Docker image
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}
           path: ./image.tar
@@ -46,7 +46,7 @@ jobs:
     needs: build
     steps:
       - name: Retrieve amd64 image
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: ociImage-amd64
           path: ./image-amd64.tar
@@ -54,7 +54,7 @@ jobs:
       - run: docker tag keys:latest keys:latest-amd64
 
       - name: Retrieve arm64 image
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: ociImage-arm64
           path: ./image-arm64.tar
