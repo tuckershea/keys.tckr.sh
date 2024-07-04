@@ -37,6 +37,7 @@ jobs:
 
   package:
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - name: Retrieve amd64 image
         uses: actions/download-artifact@v2
