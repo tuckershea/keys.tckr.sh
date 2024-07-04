@@ -58,7 +58,7 @@ jobs:
           retention-days: 14
 
       - name: Update comment
-        uses: marocchino/sticky-pull-request-comment@v2A
+        uses: marocchino/sticky-pull-request-comment@v2
         with:
           append: true
           message: |
