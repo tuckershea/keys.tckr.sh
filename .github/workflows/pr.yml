@@ -3,10 +3,28 @@ name: "Build PR"
 on:
   pull_request:
   merge_group:
+
+permissions:
+  pull-requests: write
+  
 jobs:
+  recreate-sticky-comment:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: "artifacts"
+          hide_and_recreate: true
+          hide_classify: "OUTDATED"
+          message: |
+            ### Images for ${{ github.sha }}
+            Available for 14 days
+
   build:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
+    needs: recreate-sticky-comment
     strategy:
       matrix:
         target: [ociImage-amd64, ociImage-arm64]
@@ -23,3 +41,27 @@ jobs:
           name: tuckershea
           skipPush: true
       - run: nix build .#${{ matrix.target }}
+
+      - name: Prepare for artifacting
+        # mitigates https://github.com/actions/upload-artifact/issues/109
+        run: |
+          mkdir image
+          cp -L result image/image.tar.gz
+          touch image/.dont-auto-untar
+
+      - name: Save image for inspection
+        id: artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: ./image
+          retention-days: 14
+
+      - name: Update comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: "artifacts"
+          append: true
+          message: |
+            [${{ matrix.target }}](${{ steps.artifacts.outputs.artifact-url }})
+
