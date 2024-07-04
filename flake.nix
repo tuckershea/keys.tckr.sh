@@ -13,17 +13,22 @@
       system: let
         pkgs = nixpkgs.legacyPackages.${system};
 
+        concatWords = nixpkgs.lib.strings.concatStringsSep " ";
+
         mkKeysPackage = pkgs: import ./default.nix {inherit pkgs;};
+        mkKeysCmd = pkgs: [
+          "${pkgs.static-web-server}/bin/static-web-server"
+          "--root=${mkKeysPackage pkgs}"
+          "--index-files=index.txt"
+          "--port=8000"
+          "--health"
+        ];
+
         mkKeysApp = pkgs: (flake-utils.lib.mkApp
           {
-            drv = pkgs.writeShellScriptBin "keys" ''
-              ${pkgs.static-web-server}/bin/static-web-server \
-              --root ${mkKeysPackage pkgs} \
-              --index-files index.txt \
-              --port 8000 \
-              --health
-            '';
+            drv = pkgs.writeShellScriptBin "keys" (concatWords (mkKeysCmd pkgs));
           });
+
         mkKeysContainer = {
           hostPkgs,
           containerPkgs,
@@ -31,7 +36,7 @@
           name = "keys";
           tag = "latest";
           config = {
-            Cmd = ["${(mkKeysApp containerPkgs).program}"];
+            Cmd = mkKeysCmd pkgs;
           };
         });
       in rec {
