@@ -49,16 +49,16 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ociImage-amd64
-          path: ./result-amd64.tar
-      - run: docker load -i ./result-amd64.tar
+          path: ./image-amd64.tar
+      - run: docker load -i ./image-amd64.tar
       - run: docker tag keys:latest keys:latest-amd64
 
       - name: Retrieve arm64 image
         uses: actions/download-artifact@v2
         with:
           name: ociImage-arm64
-          path: ./result-arm64.tar
-      - run: docker load -i ./result-arm64.tar
+          path: ./image-arm64.tar
+      - run: docker load -i ./image-arm64.tar
       - run: docker tag keys:latest keys:latest-arm64
 
       - name: Login to GitHub Container Registry
