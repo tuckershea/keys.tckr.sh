@@ -60,6 +60,7 @@ jobs:
       - name: Update comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
+          header: "artifacts"
           append: true
           message: |
             [image-${{ matrix.target }}.tar.gz](${{ steps.artifacts.outputs.artifact-url }})
