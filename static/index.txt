@@ -1,0 +1,8 @@
+Tucker Shea's Public Keys
+
+Automated Script: https://keys.tckr.sh/install.sh
+
+SSH Keys: https://keys.tckr.sh/auth.keys
+Expired SSH Keys (REMOVE THESE): https://keys.tckr.sh/auth.keys.expired
+
+Repo: https://github.com/tuckershea/keys.tckr.sh
