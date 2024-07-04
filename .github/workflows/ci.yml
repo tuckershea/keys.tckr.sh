@@ -74,6 +74,12 @@ jobs:
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
+          docker tag keys:latest-amd64 $IMAGE_ID:latest-amd64
+          docker push $IMAGEID:latest-amd64
+
+          docker tag keys:latest-arm64 $IMAGE_ID:latest-arm64
+          docker push $IMAGEID:latest-arm64
+
           docker manifest create $IMAGE_ID:latest \
           --amend $IMAGE_ID:latest-amd64 \
           --amend $IMAGE_ID:latest-arm64
