@@ -19,7 +19,7 @@
             drv = pkgs.writeShellScriptBin "keys" ''
               ${pkgs.static-web-server}/bin/static-web-server \
               --root ${mkKeysPackage pkgs} \
-              --index-files auth.keys \
+              --index-files index.txt \
               --port 8000 \
               --health
             '';
