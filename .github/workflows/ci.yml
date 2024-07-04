@@ -1,0 +1,48 @@
+name: "CI"
+
+permissions:
+  packages: write
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    strategy:
+      matrix:
+        target: [ociImage-amd64, ociImage-arm64]
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v25
+        with:
+          extra_nix_config: |
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - uses: DeterminateSystems/magic-nix-cache-action@v2
+      - uses: cachix/cachix-action@v14
+        with:
+          name: tuckershea
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - run: echo YEAR_MONTH="$(date '+%Y-%m')" >> $GITHUB_ENV
+      - run: nix build .#${{ matrix.target }} -L
+      - run: docker load -i ./result
+      - run: docker tag keys:latest keys:$YEAR_MONTH
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push image
+        run: |
+          IMAGE_ID=ghcr.io/tuckershea/keys.tckr.sh
+          # Change all uppercase to lowercase
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+          docker tag keys:$YEAR_MONTH $IMAGE_ID:$YEAR_MONTH
+          docker push $IMAGE_ID:$YEAR_MONTH
+
+          docker tag keys:latest $IMAGE_ID:latest
+          docker push $IMAGE_ID:latest

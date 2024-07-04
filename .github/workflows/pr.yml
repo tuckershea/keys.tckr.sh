@@ -1,0 +1,24 @@
+name: "Build PR"
+
+on:
+  pull_request:
+jobs:
+  build:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [ociImage-amd64, ociImage-arm64]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v25
+        with:
+          extra_nix_config: |
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - uses: DeterminateSystems/magic-nix-cache-action@v2
+      - uses: cachix/cachix-action@v14
+        with:
+          name: tuckershea
+          skipPush: true
+      - run: nix build .#${{ matrix.target }}
