@@ -27,12 +27,18 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - run: nix build .#${{ matrix.target }} -L
+
+      - name: Prepare for artifacting
+        # mitigates https://github.com/actions/upload-artifact/issues/109
+        run: |
+          cp -L result image.tar.gz
+          gzip --decompress image.tar.gz
           
       - name: Temporarily save Docker image
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.target }}
-          path: ./result
+          path: ./image.tar
           retention-days: 1
 
   package:
@@ -43,16 +49,16 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ociImage-amd64
-          path: result-amd64
-      - run: docker load -i ./result-amd64
+          path: ./image-amd64.tar
+      - run: docker load -i ./image-amd64.tar
       - run: docker tag keys:latest keys:latest-amd64
 
       - name: Retrieve arm64 image
         uses: actions/download-artifact@v2
         with:
           name: ociImage-arm64
-          path: result-arm64
-      - run: docker load -i ./result-arm64
+          path: ./image-arm64.tar
+      - run: docker load -i ./image-arm64.tar
       - run: docker tag keys:latest keys:latest-arm64
 
       - name: Login to GitHub Container Registry
