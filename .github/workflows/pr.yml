@@ -48,6 +48,7 @@ jobs:
         run: |
           mkdir image
           cp -L result image/image.tar.gz
+          touch image/.dont-auto-untar
 
       - name: Save image for inspection
         id: artifacts
