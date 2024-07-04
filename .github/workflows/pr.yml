@@ -19,7 +19,7 @@ jobs:
           hide_and_recreate: true
           hide_classify: "OUTDATED"
           message: |
-            ### Artifacts for ${{ github.sha }}:
+            ### Images for ${{ github.sha }}:
             Available for 14 days
 
   build:
@@ -64,5 +64,5 @@ jobs:
           header: "artifacts"
           append: true
           message: |
-            [image-${{ matrix.target }}.tar.gz](${{ steps.artifacts.outputs.artifact-url }})
+            [${{ matrix.target }}](${{ steps.artifacts.outputs.artifact-url }})
 
