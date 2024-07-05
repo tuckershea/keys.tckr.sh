@@ -53,7 +53,7 @@ jobs:
         id: size
         run: |
           BYTE_SIZE="$(stat --printf="%s" image/image.tar.gz)"
-          HUMAN_READABLE_SIZE="$(numfmt --to=iec --suffix=B --format="%.1f" ${BYTES})"
+          HUMAN_READABLE_SIZE="$(numfmt --to=iec --suffix=B --format="%.1f" ${BYTE_SIZE})"
           echo "size=${HUMAN_READABLE_SIZE}" >> "$GITHUB_OUTPUT"
 
       - name: Save image for inspection
