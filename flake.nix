@@ -36,7 +36,7 @@
           name = "keys";
           tag = "latest";
           config = {
-            Cmd = mkKeysCmd pkgs;
+            Cmd = mkKeysCmd containerPkgs;
           };
         });
       in rec {
