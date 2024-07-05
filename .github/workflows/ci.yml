@@ -42,8 +42,13 @@ jobs:
           retention-days: 1
 
   package:
-    runs-on: ubuntu-latest
     needs: build
+    strategy:
+      matrix:
+        version:
+          - latest
+          - ${{ github.sha }}
+    runs-on: ubuntu-latest
     steps:
       - name: Retrieve amd64 image
         uses: actions/download-artifact@v4
@@ -70,17 +75,20 @@ jobs:
 
       - name: Push Manifest
         run: |
-          IMAGE_ID=ghcr.io/tuckershea/keys.tckr.sh
+          IMAGE_ID=ghcr.io/${{ github.repository }}
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
-          docker tag keys:latest-amd64 $IMAGE_ID:latest-amd64
-          docker push $IMAGE_ID:latest-amd64
+          VERSION=${{ matrix.version }}
+          VERSION=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
-          docker tag keys:latest-arm64 $IMAGE_ID:latest-arm64
-          docker push $IMAGE_ID:latest-arm64
+          docker tag keys:latest-amd64 $IMAGE_ID:${VERSION}-amd64
+          docker push $IMAGE_ID:${VERSION}-amd64
 
-          docker manifest create $IMAGE_ID:latest \
-          --amend $IMAGE_ID:latest-amd64 \
-          --amend $IMAGE_ID:latest-arm64
-          docker manifest push $IMAGE_ID:latest
+          docker tag keys:latest-arm64 $IMAGE_ID:${VERSION}-arm64
+          docker push $IMAGE_ID:${VERSION}-arm64
+
+          docker manifest create $IMAGE_ID:$VERSION \
+          --amend $IMAGE_ID:${VERSION}-amd64 \
+          --amend $IMAGE_ID:${VERSION}-arm64
+          docker manifest push $IMAGE_ID:$VERSION
