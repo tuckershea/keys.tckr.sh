@@ -49,6 +49,13 @@ jobs:
           cp -L result image/image.tar.gz
           touch image/.dont-auto-untar
 
+      - name: Compute size
+        id: size
+        run: |
+          BYTE_SIZE="$(stat --printf="%s" image/image.tar.gz)"
+          HUMAN_READABLE_SIZE="$(numfmt --to=iec --suffix=B --format="%.1f" ${BYTE_SIZE})"
+          echo "size=${HUMAN_READABLE_SIZE}" >> "$GITHUB_OUTPUT"
+
       - name: Save image for inspection
         id: artifacts
         uses: actions/upload-artifact@v4
@@ -63,5 +70,5 @@ jobs:
           header: "artifacts"
           append: true
           message: |
-            [${{ matrix.target }}](${{ steps.artifacts.outputs.artifact-url }})
+            [${{ matrix.target }}](${{ steps.artifacts.outputs.artifact-url }}) \[${{ steps.size.outputs.size }}\]
 
