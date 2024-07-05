@@ -80,7 +80,7 @@ jobs:
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
           VERSION=${{ matrix.version }}
-          VERSION=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          VERSION=$(echo $VERSION | tr '[A-Z]' '[a-z]')
 
           docker tag keys:latest-amd64 $IMAGE_ID:${VERSION}-amd64
           docker push $IMAGE_ID:${VERSION}-amd64
